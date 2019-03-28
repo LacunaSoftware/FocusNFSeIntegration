@@ -41,7 +41,7 @@ namespace Lacuna.FocusNFSeIntegration {
 			var requestUri = $"?ref={reference}";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsJsonAsync(requestUri, data)
+				() => HttpClient.PostAsync(requestUri, new StringContent(data))
 			);
 
 			var stream = await postResponse.Content.ReadAsStreamAsync();
@@ -124,7 +124,7 @@ namespace Lacuna.FocusNFSeIntegration {
 			var requestUri = $"/{reference}/email";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsJsonAsync(requestUri, emailData)
+				() => HttpClient.PostAsync(requestUri, new StringContent(emailData))
 			);
 
 			var stream = await postResponse.Content.ReadAsStreamAsync();

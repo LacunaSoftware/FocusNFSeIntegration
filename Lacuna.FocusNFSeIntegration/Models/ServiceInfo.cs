@@ -12,13 +12,13 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 		public string Description { get; set; }
 
 		[JsonProperty("iss_retido")]
-		public bool IssRetained { get; set; }
+		public string IssRetained { get; set; }
 
 		[JsonProperty("item_lista_servico")]
-		public bool ServiceListItem { get; set; }
+		public string ServiceListItem { get; set; }
 
 		[JsonProperty("codigo_tributario_municipio")]
-		public bool CityTributeCode { get; set; }
+		public string CityTributeCode { get; set; }
 
 		[JsonProperty("valor_servicos")]
 		public double ServiceValue { get; set; }

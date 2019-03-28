@@ -54,7 +54,6 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// <summary>
 		/// Service and taxes configuration
 		/// </summary>
-		[JsonProperty("servico")]
 		public ServiceInfo ServiceInfo { get; set; }
 	}
 }

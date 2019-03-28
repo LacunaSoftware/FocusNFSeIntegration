@@ -13,6 +13,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// NFSe emission date
 		/// </summary>
 		[JsonProperty("data_emissao")]
+		[JsonConverter(typeof(CustomDateTimeConverter))]
 		public DateTime EmissionDate { get; set; }
 
 		/// <summary>
