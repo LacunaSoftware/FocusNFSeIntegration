@@ -5,7 +5,7 @@ using System;
 
 namespace Lacuna.FocusNFSeIntegration {
 
-	public static class BradescoIntegrationBradescoIntegration {
+	public static class FocusNFSeIntegrationExtensions {
 
 		public static IServiceCollection AddFocusNFSeIntegration(this IServiceCollection services, Action<FocusNFSeIntegrationOptions> action = null) {
 

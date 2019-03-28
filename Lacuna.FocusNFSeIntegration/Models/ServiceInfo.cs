@@ -21,6 +21,6 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 		public bool CityTributeCode { get; set; }
 
 		[JsonProperty("valor_servicos")]
-		public decimal ServiceValue { get; set; }
+		public double ServiceValue { get; set; }
 	}
 }

@@ -21,7 +21,7 @@ namespace Lacuna.FocusNFSeIntegration {
 
 	public class FocusNFSeIntegrationUnreachableException : FocusNFSeIntegrationException {
 
-		public FocusNFSeIntegrationUnreachableException(HttpMethod verb, Uri uri, Exception innerException = null) : base($"Bradesco API {verb} {uri} is unreachable", verb, uri, innerException) {
+		public FocusNFSeIntegrationUnreachableException(HttpMethod verb, Uri uri, Exception innerException = null) : base($"Focus NFSe API {verb} {uri} is unreachable", verb, uri, innerException) {
 		}
 	}
 
@@ -38,7 +38,7 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		private static string formatExceptionMessage(HttpMethod verb, Uri uri, HttpStatusCode statusCode, string errorMessage) {
 			var sb = new StringBuilder();
-			sb.AppendFormat("Bradesco API {0} {1} returned HTTP error {2}", verb.Method, uri.AbsoluteUri, (int)statusCode);
+			sb.AppendFormat("Focus NFSe API {0} {1} returned HTTP error {2}", verb.Method, uri.AbsoluteUri, (int)statusCode);
 			if (Enum.IsDefined(typeof(HttpStatusCode), statusCode)) {
 				sb.AppendFormat(" ({0})", statusCode);
 			}

@@ -20,17 +20,13 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 		}
 
 		public static ServiceInfo GenerateServiceInfo(FocusNFSeIntegrationOptions options) {
-			var value = new Random().NextDouble();
-			if(value < 0) {
-				value = -value;
-			}
 			return new ServiceInfo {
 				Aliquota = options.ServiceInfo.Aliquota,
 				CityTributeCode = options.ServiceInfo.CityTributeCode,
 				Description = options.ServiceInfo.Description,
 				IssRetained = options.ServiceInfo.IssRetained,
 				ServiceListItem = options.ServiceInfo.ServiceListItem,
-				ServiceValue = (decimal)value,
+				ServiceValue = 1.99,
 			};
 		}
 
