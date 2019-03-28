@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lacuna.FocusNFSeIntegration.AppTest", "Lacuna.FocusNFSeIntegration.AppTest\Lacuna.FocusNFSeIntegration.AppTest.csproj", "{35D5E817-93C8-4BC1-98D2-1C561385CD88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lacuna.FocusNFSeIntegration", "Lacuna.FocusNFSeIntegration\Lacuna.FocusNFSeIntegration.csproj", "{920C9C3F-9AD4-48C7-B2ED-9500DE50D94C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35D5E817-93C8-4BC1-98D2-1C561385CD88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35D5E817-93C8-4BC1-98D2-1C561385CD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35D5E817-93C8-4BC1-98D2-1C561385CD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35D5E817-93C8-4BC1-98D2-1C561385CD88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{920C9C3F-9AD4-48C7-B2ED-9500DE50D94C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{920C9C3F-9AD4-48C7-B2ED-9500DE50D94C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{920C9C3F-9AD4-48C7-B2ED-9500DE50D94C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{920C9C3F-9AD4-48C7-B2ED-9500DE50D94C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3FED373-7ECD-41FA-A616-AB748BF4461D}
+	EndGlobalSection
+EndGlobal
