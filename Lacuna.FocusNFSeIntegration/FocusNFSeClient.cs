@@ -23,7 +23,8 @@ namespace Lacuna.FocusNFSeIntegration {
 						BaseAddress = new Uri(options.IsSandbox ? options.SandboxEndpoint : options.Endpoint)
 					};
 					_httpClient.DefaultRequestHeaders.Accept.Clear();
-					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", options.IsSandbox ? options.SandboxToken : options.Token);
+					var authHeaderBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(options.IsSandbox ? options.SandboxToken : options.Token));
+					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderBase64);
 				}
 				return _httpClient;
 			}
@@ -38,10 +39,10 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// </summary>
 		public async Task<NFSeResponse> CreateNFSeAsync(string reference, NFSeRequest request) {
 			var data = JsonConvert.SerializeObject(request);
-			var requestUri = $"?ref={reference}";
+			var requestUri = $"/v2/nfse?ref={reference}";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsync(requestUri, new StringContent(data))
+				() => HttpClient.PostAsync(requestUri, new StringContent(data, Encoding.UTF8, "application/json"))
 			);
 
 			var stream = await postResponse.Content.ReadAsStreamAsync();
@@ -62,7 +63,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// Retrieves a NFSe using its unique reference
 		/// </summary>
 		public async Task<NFSeDetailsResponse> RetrieveNFSeAsync(string reference) {
-			var requestUri = $"/{reference}?completa=0";
+			var requestUri = $"/v2/nfse/{reference}?completa=0";
 
 			var resp = await performHttpRequestAsync(HttpMethod.Get, requestUri,
 				() => HttpClient.GetAsync(requestUri)
@@ -86,7 +87,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// Cancels a NFSe using its unique reference
 		/// </summary>
 		public async Task<NFSeOnlyStatusResponse> CancelNFSeAsync(string reference) {
-			var requestUri = $"/{reference}";
+			var requestUri = $"/v2/nfse/{reference}";
 
 			var resp = await performHttpRequestAsync(HttpMethod.Delete, requestUri,
 				() => HttpClient.DeleteAsync(requestUri)
@@ -109,19 +110,19 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// <summary>
 		/// Sends a NFSe to the e-mails inside the given list
 		/// </summary>
-		public async Task ResendEmailAsync(string reference, IEnumerable<string> emails) {
+		public async Task ResendEmailAsync(string reference, EmailSendRequest request) {
 
-			if (emails == null) {
+			if (request.Emails == null) {
 				throw new Exception("A list of e-mails must be provided. Min: 1, Max: 10.");
 			}
 
-			if (emails.Count() > 10 || emails.Count() < 1) {
-				var emailCount = emails.Count();
+			if (request.Emails.Count() > 10 || request.Emails.Count() < 1) {
+				var emailCount = request.Emails.Count();
 				throw new Exception($"A list of e-mails must be provided with at least 1 email and no more than 10 emails. Emails in the list: {emailCount}");
 			}
 
-			var emailData = JsonConvert.SerializeObject(emails);
-			var requestUri = $"/{reference}/email";
+			var emailData = JsonConvert.SerializeObject(request);
+			var requestUri = $"/v2/nfse/{reference}/email";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
 				() => HttpClient.PostAsync(requestUri, new StringContent(emailData))
