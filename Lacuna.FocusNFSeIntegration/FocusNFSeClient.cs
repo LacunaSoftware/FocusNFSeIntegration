@@ -110,31 +110,31 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// <summary>
 		/// Sends a NFSe to the e-mails inside the given list
 		/// </summary>
-		public async Task ResendEmailAsync(string reference, EmailSendRequest request) {
+		//public async Task ResendEmailAsync(string reference, EmailSendRequest request) {
 
-			if (request.Emails == null) {
-				throw new Exception("A list of e-mails must be provided. Min: 1, Max: 10.");
-			}
+		//	if (request.Emails == null) {
+		//		throw new Exception("A list of e-mails must be provided. Min: 1, Max: 10.");
+		//	}
 
-			if (request.Emails.Count() > 10 || request.Emails.Count() < 1) {
-				var emailCount = request.Emails.Count();
-				throw new Exception($"A list of e-mails must be provided with at least 1 email and no more than 10 emails. Emails in the list: {emailCount}");
-			}
+		//	if (request.Emails.Count() > 10 || request.Emails.Count() < 1) {
+		//		var emailCount = request.Emails.Count();
+		//		throw new Exception($"A list of e-mails must be provided with at least 1 email and no more than 10 emails. Emails in the list: {emailCount}");
+		//	}
 
-			var emailData = JsonConvert.SerializeObject(request);
-			var requestUri = $"/v2/nfse/{reference}/email";
+		//	var emailData = JsonConvert.SerializeObject(request);
+		//	var requestUri = $"/v2/nfse/{reference}/email";
 
-			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsync(requestUri, new StringContent(emailData))
-			);
+		//	var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
+		//		() => HttpClient.PostAsync(requestUri, new StringContent(emailData))
+		//	);
 
-			var stream = await postResponse.Content.ReadAsStreamAsync();
+		//	var stream = await postResponse.Content.ReadAsStreamAsync();
 
-			using (var reader = new StreamReader(stream)) {
-				var jsonResp = reader.ReadToEnd();
+		//	using (var reader = new StreamReader(stream)) {
+		//		var jsonResp = reader.ReadToEnd();
 	
-			}
-		}
+		//	}
+		//}
 
 		private async Task<HttpResponseMessage> performHttpRequestAsync(HttpMethod verb, string requestUri, Func<Task<HttpResponseMessage>> asyncFunc) {
 			var uri = new Uri(HttpClient.BaseAddress, requestUri);

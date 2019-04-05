@@ -42,10 +42,10 @@ namespace Lacuna.FocusNFSeIntegration.AppTest.Controllers {
 			return Ok(retorno);
 		}
 
-		[HttpPost("email/{reference}")]
-		public async Task<IActionResult> EmailNFSeAsync(string reference, [FromBody]EmailSendRequest request) {
-			await focusClient.ResendEmailAsync(reference, request);
-			return Ok();
-		}
+		//[HttpPost("email/{reference}")]
+		//public async Task<IActionResult> EmailNFSeAsync(string reference, [FromBody]EmailSendRequest request) {
+		//	await focusClient.ResendEmailAsync(reference, request);
+		//	return Ok();
+		//}
 	}
 }
