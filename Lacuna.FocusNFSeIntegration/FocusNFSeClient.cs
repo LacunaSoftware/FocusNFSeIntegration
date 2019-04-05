@@ -38,7 +38,10 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// Submits a NFSe. Must be verified if the NFSe was accept in further retrieval requests.
 		/// </summary>
 		public async Task<NFSeResponse> CreateNFSeAsync(string reference, NFSeRequest request) {
-			var data = JsonConvert.SerializeObject(request);
+			var data = JsonConvert.SerializeObject(request,
+							new JsonSerializerSettings {
+								NullValueHandling = NullValueHandling.Ignore
+							});
 			var requestUri = $"/v2/nfse?ref={reference}";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,

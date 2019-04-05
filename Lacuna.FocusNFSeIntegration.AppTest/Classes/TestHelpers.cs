@@ -33,7 +33,7 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 		public static ClientInfo GenerateClientInfo(FocusNFSeIntegrationOptions options) {
 			return new ClientInfo {
 				Cnpj = "55500000000142",
-				CompanyName = "Test Company",
+				CompanyNameOrClientName = "Test Company",
 				Email = "focusnfse.test@malinator.com",
 				AddressInfo = new AddressInfo {
 					CityCode = "5300108",

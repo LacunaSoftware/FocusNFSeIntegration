@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Lacuna.FocusNFSeIntegration {
-	class Enums {
+
+	public class Enums {
 	}
 }
