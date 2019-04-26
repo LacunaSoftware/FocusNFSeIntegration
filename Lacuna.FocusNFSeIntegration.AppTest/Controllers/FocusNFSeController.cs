@@ -21,8 +21,8 @@ namespace Lacuna.FocusNFSeIntegration.AppTest.Controllers {
 		}
 
 		[HttpPost("{reference}")]
-		public async Task<IActionResult> SubmitNFSeAsync(string reference) {
-			var req = TestHelpers.GenerateRequest(focusOptions.Value);
+		public async Task<IActionResult> SubmitNFSeAsync(string reference, [FromQuery]bool hasCnpj = true) {
+			var req = TestHelpers.GenerateRequest(focusOptions.Value, hasCnpj);
 
 			var retorno = await focusClient.CreateNFSeAsync(reference, req);
 			return Ok(retorno);

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 	public class TestHelpers {
 
-		public static NFSeRequest GenerateRequest(FocusNFSeIntegrationOptions options) {
+		public static NFSeRequest GenerateRequest(FocusNFSeIntegrationOptions options, bool hasCnpj = true) {
 			var request = new NFSeRequest {
 				EmissionDate = DateTime.Now,
 				Provider = GenerateProviderInfo(options),
-				Client = GenerateClientInfo(options),
+				Client = GenerateClientInfo(options, hasCnpj),
 				Info = GenerateServiceInfo(options),
 			};
 
@@ -30,9 +30,8 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 			};
 		}
 
-		public static ClientInfo GenerateClientInfo(FocusNFSeIntegrationOptions options) {
-			return new ClientInfo {
-				Cnpj = "55500000000142",
+		public static ClientInfo GenerateClientInfo(FocusNFSeIntegrationOptions options, bool hasCnpj = true) {
+			var info = new ClientInfo {				
 				CompanyNameOrClientName = "Test Company",
 				Email = "focusnfse.test@malinator.com",
 				AddressInfo = new AddressInfo {
@@ -45,6 +44,13 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 					UF = "DF"
 				}
 			};
+			if (hasCnpj) {
+				info.Cnpj = "55500000000142";
+			} else {
+				info.Cpf = "55500000160";
+			}			
+
+			return info;
 		}
 
 		public static ProviderInfo GenerateProviderInfo(FocusNFSeIntegrationOptions options) {

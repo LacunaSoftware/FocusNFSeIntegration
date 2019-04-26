@@ -45,7 +45,7 @@ namespace Lacuna.FocusNFSeIntegration {
 			var requestUri = $"/v2/nfse?ref={reference}";
 
 			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsync(requestUri, new StringContent(data, Encoding.UTF8, "application/json"))
+				() => HttpClient.PostAsync(requestUri, new StringContent(data, Encoding.UTF8))
 			);
 
 			var stream = await postResponse.Content.ReadAsStreamAsync();
