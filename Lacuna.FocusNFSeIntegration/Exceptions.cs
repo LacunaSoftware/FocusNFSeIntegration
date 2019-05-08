@@ -13,7 +13,7 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		public Uri Uri { get; set; }
 
-		public FocusNFSeIntegrationException(string message, HttpMethod verb, Uri uri, Exception innerException = null) : base(message, innerException) {
+		public FocusNFSeIntegrationException(string message, HttpMethod verb, Uri uri, Exception innerException = null, HttpContent content = null) : base(message, innerException) {
 			Verb = verb;
 			Uri = uri;
 		}
@@ -31,12 +31,12 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		public string ErrorMessage { get; private set; }
 
-		public FocusNFSeIntegrationHttpException(HttpMethod verb, Uri uri, HttpStatusCode statusCode, string errorMessage = null, Exception innerException = null) : base(formatExceptionMessage(verb, uri, statusCode, errorMessage), verb, uri, innerException) {
+		public FocusNFSeIntegrationHttpException(HttpMethod verb, Uri uri, HttpStatusCode statusCode, string errorMessage = null, Exception innerException = null, string content = null) : base(formatExceptionMessage(verb, uri, statusCode, errorMessage, content), verb, uri, innerException) {
 			StatusCode = statusCode;
 			ErrorMessage = errorMessage;
 		}
 
-		private static string formatExceptionMessage(HttpMethod verb, Uri uri, HttpStatusCode statusCode, string errorMessage) {
+		private static string formatExceptionMessage(HttpMethod verb, Uri uri, HttpStatusCode statusCode, string errorMessage, string content) {
 			var sb = new StringBuilder();
 			sb.AppendFormat("Focus NFSe API {0} {1} returned HTTP error {2}", verb.Method, uri.AbsoluteUri, (int)statusCode);
 			if (Enum.IsDefined(typeof(HttpStatusCode), statusCode)) {
@@ -45,6 +45,11 @@ namespace Lacuna.FocusNFSeIntegration {
 			if (!string.IsNullOrWhiteSpace(errorMessage)) {
 				sb.AppendFormat(": {0}", errorMessage);
 			}
+			if (content != null) {
+				sb.AppendFormat(". Error Content: {0}", content);
+			}
+
+
 			return sb.ToString();
 		}
 	}

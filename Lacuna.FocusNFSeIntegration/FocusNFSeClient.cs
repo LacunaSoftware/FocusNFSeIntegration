@@ -148,7 +148,8 @@ namespace Lacuna.FocusNFSeIntegration {
 				throw new FocusNFSeIntegrationUnreachableException(verb, uri, ex);
 			}
 			if (!httpResponse.IsSuccessStatusCode) {
-				throw new FocusNFSeIntegrationHttpException(verb, uri, httpResponse.StatusCode, httpResponse.ReasonPhrase);
+				var stringContent = await httpResponse.Content.ReadAsStringAsync();
+				throw new FocusNFSeIntegrationHttpException(verb, uri, httpResponse.StatusCode, httpResponse.ReasonPhrase, content: stringContent);
 			}
 			return httpResponse;
 		}
