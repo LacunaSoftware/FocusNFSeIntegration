@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Lacuna.FocusNFSeIntegration.Models {
+
 	public class ServiceInfo {
+
 		[JsonProperty("aliquota")]
 		public int Aliquota { get; set; }
 
@@ -12,7 +14,7 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 		public string Description { get; set; }
 
 		[JsonProperty("iss_retido")]
-		public string IssRetained { get; set; }
+		public bool IssRetained { get; set; }
 
 		[JsonProperty("item_lista_servico")]
 		public string ServiceListItem { get; set; }
