@@ -12,21 +12,21 @@ using System.Threading.Tasks;
 namespace Lacuna.FocusNFSeIntegration {
 	public class FocusNFSeClient {
 
-		private HttpClient _httpClient;
+		private HttpClient httpClient;
 
 		private readonly FocusNFSeIntegrationOptions options;
 
 		protected HttpClient HttpClient {
 			get {
-				if (_httpClient == null) {
-					_httpClient = new HttpClient {
+				if (httpClient == null) {
+					httpClient = new HttpClient {
 						BaseAddress = new Uri(options.IsSandbox ? options.SandboxEndpoint : options.Endpoint)
 					};
-					_httpClient.DefaultRequestHeaders.Accept.Clear();
+					httpClient.DefaultRequestHeaders.Accept.Clear();
 					var authHeaderBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(options.IsSandbox ? options.SandboxToken : options.Token));
-					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderBase64);
+					httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderBase64);
 				}
-				return _httpClient;
+				return httpClient;
 			}
 		}
 
@@ -52,13 +52,20 @@ namespace Lacuna.FocusNFSeIntegration {
 
 			using (var reader = new StreamReader(stream)) {
 				var jsonResp = reader.ReadToEnd();
-				var response = JsonConvert.DeserializeObject<NFSeResponse>(jsonResp);
 
-				if (response.Errors != null) {
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Post, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors);
-				}
+				try {
+					var response = JsonConvert.DeserializeObject<NFSeResponse>(jsonResp);
 
-				return response;
+					if (response.Errors != null) {
+						throw new FocusNFSeIntegrationApiException(HttpMethod.Post, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
+					}
+
+					return response;
+
+				} catch {
+					var error = JsonConvert.DeserializeObject<NFSeError>(jsonResp);
+					throw new FocusNFSeIntegrationApiException(HttpMethod.Post, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", new List<string> { $"Codigo: {error.Code} - Mensagem: {error.Message}" });
+				}				
 			}
 		}
 
@@ -79,7 +86,7 @@ namespace Lacuna.FocusNFSeIntegration {
 				var response = JsonConvert.DeserializeObject<NFSeDetailsResponse>(jsonretorno);
 
 				if (response.Errors != null) {
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Get, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors);
+					throw new FocusNFSeIntegrationApiException(HttpMethod.Get, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
 				}
 
 				return response;
@@ -103,7 +110,7 @@ namespace Lacuna.FocusNFSeIntegration {
 				var response = JsonConvert.DeserializeObject<NFSeOnlyStatusResponse>(jsonretorno);
 
 				if (response.Errors != null) {
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Delete, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors);
+					throw new FocusNFSeIntegrationApiException(HttpMethod.Delete, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
 				}
 
 				return response;

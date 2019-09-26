@@ -27,6 +27,12 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 		public string CitySubscription { get; set; }
 
 		/// <summary>
+		/// Client's state subscription number
+		/// </summary>
+		[JsonProperty("inscricao_estadual")]
+		public string StateSubscription { get; set; }
+
+		/// <summary>
 		/// Client's company name
 		/// </summary>
 		[JsonProperty("razao_social")]

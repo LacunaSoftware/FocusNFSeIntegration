@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Lacuna.FocusNFSeIntegration.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// Error list if the operation was not successful
 		/// </summary>
 		[JsonProperty("erros")]
-		public List<string> Errors { get; set; }
+		public List<NFSeError> Errors { get; set; }
 	}
 
 	public class NFSeResponse: NFSeOnlyStatusResponse {

@@ -46,6 +46,8 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 			};
 			if (hasCnpj) {
 				info.Cnpj = "55500000000142";
+				info.CitySubscription = "Isento";
+				info.StateSubscription = "Isento";
 			} else {
 				info.Cpf = "55500000160";
 			}			
