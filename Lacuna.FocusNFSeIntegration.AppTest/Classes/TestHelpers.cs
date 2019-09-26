@@ -32,22 +32,22 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 
 		public static ClientInfo GenerateClientInfo(FocusNFSeIntegrationOptions options, bool hasCnpj = true) {
 			var info = new ClientInfo {				
-				CompanyNameOrClientName = "Test Company",
-				Email = "focusnfse.test@malinator.com",
+				CompanyNameOrClientName = "LACUNA SOFTWARE LTDA - EPP",
+				Email = "adm@lacunasoftware.com",
 				AddressInfo = new AddressInfo {
 					CityCode = "5300108",
 					Complement = "",
-					Neighborhood = "Centro",
-					Number = "1",
-					PostalCode = "70297400",
-					Street = "Rua Teste",
+					Neighborhood = "Asa Norte",
+					Number = "203",
+					PostalCode = "70753510",
+					Street = "CLN 110 Bloco A",
 					UF = "DF"
 				}
 			};
 			if (hasCnpj) {
-				info.Cnpj = "55500000000142";
-				info.CitySubscription = "Isento";
-				info.StateSubscription = "Isento";
+				info.Cnpj = "20658903000171";
+				info.CitySubscription = "144408646118";
+				info.StateSubscription = "144408646118";
 			} else {
 				info.Cpf = "55500000160";
 			}			
