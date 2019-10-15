@@ -70,7 +70,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		}
 
 		private static string formatErrorMessage(HttpMethod verb, Uri uri, string code, string message, List<string> errors) {
-			if (errors != null) {
+			if (errors == null) {
 				return string.Format("Focus NFSe API {0} {1} returned an error. Focus NFSe error code: {2}. Message: {3}", verb, uri, code, message);
 			} else {
 				return string.Format("Focus NFSe API {0} {1} returned an error. Focus NFSe error code: {2}. Message: {3}. Errors returned: {4}", verb, uri, code, message, string.Join(", ", errors.ToArray()));
