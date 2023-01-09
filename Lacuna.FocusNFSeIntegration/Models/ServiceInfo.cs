@@ -8,7 +8,7 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 	public class ServiceInfo {
 
 		[JsonProperty("aliquota")]
-		public double Aliquota { get; set; }
+		public double? Aliquota { get; set; }
 
 		[JsonProperty("discriminacao")]
 		public string Description { get; set; }
