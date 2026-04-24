@@ -10,8 +10,8 @@
 
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
-    <AssemblyName>Lacuna.FocusNFeIntegration.AppTest</AssemblyName>
-    <RootNamespace>Lacuna.FocusNFeIntegration.AppTest</RootNamespace>
+    <AssemblyName>Lacuna.FocusNFSeIntegration.AppTest</AssemblyName>
+    <RootNamespace>Lacuna.FocusNFSeIntegration.AppTest</RootNamespace>
     <UserSecretsId>ae90e351-4401-4819-b96e-5cda579fd657</UserSecretsId>
   </PropertyGroup>
 

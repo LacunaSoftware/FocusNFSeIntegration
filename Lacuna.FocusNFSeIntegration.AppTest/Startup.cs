@@ -23,6 +23,9 @@ namespace Lacuna.FocusNFSeIntegration.AppTest {
 			services.AddSpaStaticFiles(configuration => {
 				configuration.RootPath = "ClientApp/dist";
 			});
+
+			services.AddEndpointsApiExplorer();
+			services.AddSwaggerGen();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

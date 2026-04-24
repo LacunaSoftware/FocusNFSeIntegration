@@ -1,11 +1,8 @@
-﻿using Lacuna.FocusNFSeIntegration;
-using Lacuna.FocusNFSeIntegration.Models;
+﻿using Lacuna.FocusNFSeIntegration.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
+namespace Lacuna.FocusNFSeIntegration.AppTest.Classes {
 	public class TestHelpers {
 
 		public static NFSeRequest GenerateRequest(FocusNFSeIntegrationOptions options, bool hasCnpj = true) {
@@ -31,7 +28,7 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 		}
 
 		public static ClientInfo GenerateClientInfo(FocusNFSeIntegrationOptions options, bool hasCnpj = true) {
-			var info = new ClientInfo {				
+			var info = new ClientInfo {
 				CompanyNameOrClientName = "LACUNA SOFTWARE LTDA - EPP",
 				Email = "adm@lacunasoftware.com",
 				AddressInfo = new AddressInfo {
@@ -50,7 +47,7 @@ namespace Lacuna.FocusNFeIntegration.AppTest.Classes {
 				info.StateSubscription = "144408646118";
 			} else {
 				info.Cpf = "55500000160";
-			}			
+			}
 
 			return info;
 		}

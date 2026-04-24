@@ -1,10 +1,7 @@
-﻿using Lacuna.FocusNFeIntegration.AppTest.Classes;
-using Microsoft.AspNetCore.Http;
+﻿using Lacuna.FocusNFSeIntegration.AppTest.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lacuna.FocusNFSeIntegration.AppTest.Controllers {
@@ -21,7 +18,7 @@ namespace Lacuna.FocusNFSeIntegration.AppTest.Controllers {
 		}
 
 		[HttpPost("{reference}")]
-		public async Task<IActionResult> SubmitNFSeAsync(string reference, [FromQuery]bool hasCnpj = true) {
+		public async Task<IActionResult> SubmitNFSeAsync(string reference, [FromQuery] bool hasCnpj = true) {
 			var req = TestHelpers.GenerateRequest(focusOptions.Value, hasCnpj);
 
 			var retorno = await focusClient.CreateNFSeAsync(reference, req);
