@@ -1,10 +1,9 @@
-﻿#if NETSTANDARD2_0
-using Microsoft.Extensions.Options;
+﻿using Lacuna.FocusNFSeIntegration;
+using Microsoft.Extensions.Logging;
+using System.Net.Http;
 
-namespace Lacuna.FocusNFSeIntegration {
-	internal class FocusNFSeClientAspNetCore: FocusNFSeClient {
-		public FocusNFSeClientAspNetCore(IOptions<FocusNFSeIntegrationOptions> options) : base(options.Value) {
-		}
+internal class FocusNFSeAspNetCore : FocusNFSeClient {
+
+	public FocusNFSeAspNetCore(ILogger<FocusNFSeClient> logger, IHttpClientFactory clientFactory) : base(logger, clientFactory) {
 	}
 }
-#endif
