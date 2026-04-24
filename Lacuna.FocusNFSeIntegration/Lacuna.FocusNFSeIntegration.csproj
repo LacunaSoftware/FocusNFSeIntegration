@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.0.0-beta08</Version>
+    <Version>1.1.0-beta01</Version>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Lacuna.FocusNFSeIntegration.snk</AssemblyOriginatorKeyFile>
