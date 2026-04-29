@@ -1,72 +1,48 @@
 ﻿using Lacuna.FocusNFSeIntegration.Models;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Lacuna.FocusNFSeIntegration {
 	public class FocusNFSeClient {
 
-		private HttpClient httpClient;
+		private readonly ILogger<FocusNFSeClient> logger;
+		private readonly IHttpClientFactory clientFactory;
 
-		private readonly FocusNFSeIntegrationOptions options;
-
-		protected HttpClient HttpClient {
-			get {
-				if (httpClient == null) {
-					httpClient = new HttpClient {
-						BaseAddress = new Uri(options.IsSandbox ? options.SandboxEndpoint : options.Endpoint)
-					};
-					httpClient.DefaultRequestHeaders.Accept.Clear();
-					var authHeaderBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(options.IsSandbox ? options.SandboxToken : options.Token));
-					httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderBase64);
-				}
-				return httpClient;
-			}
-		}
-
-		public FocusNFSeClient(FocusNFSeIntegrationOptions options) {
-			this.options = options;
+		public FocusNFSeClient(ILogger<FocusNFSeClient> logger, IHttpClientFactory clientFactory) {
+			this.logger = logger;
+			this.clientFactory = clientFactory;
 		}
 
 		/// <summary>
 		/// Submits a NFSe. Must be verified if the NFSe was accept in further retrieval requests.
 		/// </summary>
 		public async Task<NFSeResponse> CreateNFSeAsync(string reference, NFSeRequest request) {
-			var data = JsonConvert.SerializeObject(request,
+			var body = JsonConvert.SerializeObject(request,
 							new JsonSerializerSettings {
 								NullValueHandling = NullValueHandling.Ignore
 							});
+
 			var requestUri = $"/v2/nfse?ref={reference}";
 
-			var postResponse = await performHttpRequestAsync(HttpMethod.Post, requestUri,
-				() => HttpClient.PostAsync(requestUri, new StringContent(data, Encoding.UTF8))
+			var data = new StringContent(body, Encoding.UTF8, Constants.MediaType);
+
+			return await sendHttpRequestAsync<NFSeResponse>(
+				HttpMethod.Post,
+				requestUri,
+				data,
+				(response, client, obj) => handleErrorResponse(
+					HttpMethod.Post,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
 			);
-
-			var stream = await postResponse.Content.ReadAsStreamAsync();
-
-			using (var reader = new StreamReader(stream)) {
-				var jsonResp = reader.ReadToEnd();
-
-				try {
-					var response = JsonConvert.DeserializeObject<NFSeResponse>(jsonResp);
-
-					if (response.Errors != null) {
-						throw new FocusNFSeIntegrationApiException(HttpMethod.Post, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
-					}
-
-					return response;
-
-				} catch {
-					var error = JsonConvert.DeserializeObject<NFSeError>(jsonResp);
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Post, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", new List<string> { $"Codigo: {error.Code} - Mensagem: {error.Message}" });
-				}				
-			}
 		}
 
 		/// <summary>
@@ -75,22 +51,17 @@ namespace Lacuna.FocusNFSeIntegration {
 		public async Task<NFSeDetailsResponse> RetrieveNFSeAsync(string reference) {
 			var requestUri = $"/v2/nfse/{reference}?completa=0";
 
-			var resp = await performHttpRequestAsync(HttpMethod.Get, requestUri,
-				() => HttpClient.GetAsync(requestUri)
+			return await sendHttpRequestAsync<NFSeDetailsResponse>(
+				HttpMethod.Get,
+				requestUri,
+				afterDeserialization: (response, client, obj) => handleErrorResponse(
+					HttpMethod.Get,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
 			);
-
-			var stream = await HttpClient.GetStreamAsync(requestUri);
-
-			using (var reader = new StreamReader(stream)) {
-				var jsonretorno = reader.ReadToEnd();
-				var response = JsonConvert.DeserializeObject<NFSeDetailsResponse>(jsonretorno);
-
-				if (response.Errors != null) {
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Get, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
-				}
-
-				return response;
-			}
 		}
 
 		/// <summary>
@@ -99,22 +70,17 @@ namespace Lacuna.FocusNFSeIntegration {
 		public async Task<NFSeOnlyStatusResponse> CancelNFSeAsync(string reference) {
 			var requestUri = $"/v2/nfse/{reference}";
 
-			var resp = await performHttpRequestAsync(HttpMethod.Delete, requestUri,
-				() => HttpClient.DeleteAsync(requestUri)
+			return await sendHttpRequestAsync<NFSeOnlyStatusResponse>(
+				HttpMethod.Delete,
+				requestUri,
+				afterDeserialization: (response, client, obj) => handleErrorResponse(
+					HttpMethod.Delete,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
 			);
-
-			var stream = await HttpClient.GetStreamAsync(requestUri);
-
-			using (var reader = new StreamReader(stream)) {
-				var jsonretorno = reader.ReadToEnd();
-				var response = JsonConvert.DeserializeObject<NFSeOnlyStatusResponse>(jsonretorno);
-
-				if (response.Errors != null) {
-					throw new FocusNFSeIntegrationApiException(HttpMethod.Delete, new Uri(HttpClient.BaseAddress, requestUri), "Response error", "Error on response", response.Errors.Select(e => $"Codigo: {e.Code} - Mensagem: {e.Message}").ToList());
-				}
-
-				return response;
-			}
 		}
 
 		/// <summary>
@@ -142,24 +108,59 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		//	using (var reader = new StreamReader(stream)) {
 		//		var jsonResp = reader.ReadToEnd();
-	
+
 		//	}
 		//}
 
-		private async Task<HttpResponseMessage> performHttpRequestAsync(HttpMethod verb, string requestUri, Func<Task<HttpResponseMessage>> asyncFunc) {
-			var uri = new Uri(HttpClient.BaseAddress, requestUri);
-			HttpResponseMessage httpResponse;
+		private async Task<T> sendHttpRequestAsync<T>(HttpMethod method, string endpoint, HttpContent content = null, Action<HttpResponseMessage, HttpClient, T> afterDeserialization = null) {
+			using var client = clientFactory.CreateClient(Constants.FactoryClientName);
+			HttpResponseMessage httpResponse = null;
+
 			try {
-				httpResponse = await asyncFunc();
+				httpResponse = method switch {
+					var m when m == HttpMethod.Get => await client.GetAsync(endpoint),
+					var m when m == HttpMethod.Post => await client.PostAsync(endpoint, content),
+					var m when m == HttpMethod.Delete => await client.DeleteAsync(endpoint),
+					_ => throw new NotSupportedException($"HTTP method {method} not supported.")
+				};
 			} catch (Exception ex) {
-				throw new FocusNFSeIntegrationUnreachableException(verb, uri, ex);
+				logger.LogError("Error calling Focus API. Method: {method}, Url: {endpoint}, Message: {Message}", method, endpoint, ex.Message);
+				throw new FocusNFSeIntegrationUnreachableException(method, new Uri(client.BaseAddress, endpoint), ex);
 			}
+
+			var responseContent = await httpResponse.Content.ReadAsStringAsync();
+
 			if (!httpResponse.IsSuccessStatusCode) {
-				var stringContent = await httpResponse.Content.ReadAsStringAsync();
-				throw new FocusNFSeIntegrationHttpException(verb, uri, httpResponse.StatusCode, httpResponse.ReasonPhrase, content: stringContent);
+				logger.LogError("Not sucessfull status code {StatusCode}: {stringContent}", httpResponse.StatusCode, responseContent);
+				throw new FocusNFSeIntegrationHttpException(
+					method,
+					new Uri(client.BaseAddress, endpoint),
+					httpResponse.StatusCode,
+					httpResponse.ReasonPhrase,
+					content: responseContent
+				);
 			}
-			return httpResponse;
+
+			try {
+				var result = JsonConvert.DeserializeObject<T>(responseContent);
+				afterDeserialization?.Invoke(httpResponse, client, result);
+				return result;
+			} catch {
+				var error = JsonConvert.DeserializeObject<NFSeError>(responseContent);
+				throw new FocusNFSeIntegrationApiException(
+					method,
+					new Uri(client.BaseAddress, endpoint),
+					"Response error",
+					"Error on response",
+					new List<string> { $"Codigo: {error.Code} - Mensagem: {error.Message}" }
+				);
+			}
 		}
 
+		private static void handleErrorResponse(HttpMethod method, Uri uri, string code, string message, List<NFSeError> errors) {
+			if (errors != null) {
+				throw new FocusNFSeIntegrationApiException(method, uri, code, message, errors.ConvertAll(e => $"Codigo: {e.Code} - Mensagem: {e.Message}"));
+			}
+		}
 	}
 }
