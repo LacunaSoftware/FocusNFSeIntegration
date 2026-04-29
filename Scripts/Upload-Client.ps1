@@ -56,7 +56,7 @@ try {
 	#
 	# Decide package repository
 	#
-	$packageRepo = 'MyGet'
+	$packageRepo = 'Azure'
 	if ($isStable -and $isPublic) {
 		$packageRepo = 'Nuget'
 	}
@@ -65,7 +65,7 @@ try {
 	#
 	# Find symbols package
 	#
-	if ($packageRepo -ieq 'MyGet') {
+	if ($packageRepo -ieq 'Azure') {
 		Write-Log "Locating symbols package ..."
 		$symbolsPackageName = $package.Name.Replace('.nupkg', '.symbols.nupkg')
 		if (-not (Test-Path ".\$symbolsPackageName")) {
@@ -78,17 +78,18 @@ try {
 		Write-Log 'No symbols package will be uploaded'
 	}
 	
-	#
-	# Get API key
-	#
-	$apiKey = Get-ApiKey $packageRepo
-	if ($apiKey -eq $null) {
-		Write-Warning "API key not given, aborting"
-		exit 4
+	if (!($packageRepo -eq 'Azure')) {
+		#
+		# Get API key
+		#
+		$apiKey = Get-ApiKey $packageRepo
+		if ($apiKey -eq $null) {
+			Write-Warning "API key not given, aborting"
+			exit 4
+		}
+		$apiKey = $apiKey.Trim()
+		Write-Log "$packageRepo API key: $apiKey"
 	}
-	$apiKey = $apiKey.Trim()
-	Write-Log "$packageRepo API key: $apiKey"
-	
 	#
 	# Confirm
 	#
@@ -103,13 +104,12 @@ try {
 	# Upload
 	#
 	Write-Log "Uploading to $packageRepo ..."
-	if ($packageRepo -ieq 'MyGet') {
+	if ($packageRepo -ieq 'Azure') {
 	
 		#
-		# MyGet (with symbols)
+		# Azure (with symbols)
 		#
-		& nuget push $package.Name $apiKey -Source https://www.myget.org/F/lacunasoftware/api/v2/package -SymbolSource https://www.myget.org/F/lacunasoftware/symbols/api/v2/package -SymbolApiKey $apiKey
-	
+		& dotnet nuget push -s "https://lacunasoftware.pkgs.visualstudio.com/_packaging/lacunasoftware/nuget/v3/index.json" -k az $package.Name
 	} elseif ($packageRepo -ieq 'Nuget') {
 	
 		#
