@@ -143,9 +143,11 @@ namespace Lacuna.FocusNFSeIntegration {
 
 			try {
 				var result = JsonConvert.DeserializeObject<T>(responseContent);
+				logger.LogInformation("NFSe response processed successfully. Method: {Method}, Url: {Endpoint}, ResponseType: {ResponseType}", method, endpoint, typeof(T).Name);
 				afterDeserialization?.Invoke(httpResponse, client, result);
 				return result;
 			} catch (Exception ex) when (ex is not FocusNFSeIntegrationApiException) {
+				logger.LogError(ex, "Error processing NFSe response. Method: {Method}, Url: {Endpoint}, ResponseContent: {ResponseContent}", method, endpoint, responseContent);
 				var error = JsonConvert.DeserializeObject<NFSeError>(responseContent);
 				throw new FocusNFSeIntegrationApiException(
 					method,
