@@ -9,6 +9,9 @@ namespace Lacuna.FocusNFSeIntegration.Models {
 		[JsonProperty("mensagem")]
 		public string Message { get; set; }
 
+		[JsonProperty("correcao")]
+		public string Correction { get; set; }
+
 		[JsonProperty("erros")]
 		public List<string> Errors { get; set; }
 	}

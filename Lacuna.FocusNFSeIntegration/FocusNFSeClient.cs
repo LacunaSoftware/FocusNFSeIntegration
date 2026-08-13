@@ -152,15 +152,20 @@ namespace Lacuna.FocusNFSeIntegration {
 					new Uri(client.BaseAddress, endpoint),
 					"Response error",
 					"Error on response",
-					new List<string> { $"Codigo: {error.Code} - Mensagem: {error.Message}" }
+					new List<string> { formatError(error) }
 				);
 			}
 		}
 
 		private static void handleErrorResponse(HttpMethod method, Uri uri, string code, string message, List<NFSeError> errors) {
 			if (errors != null) {
-				throw new FocusNFSeIntegrationApiException(method, uri, code, message, errors.ConvertAll(e => $"Codigo: {e.Code} - Mensagem: {e.Message}"));
+				throw new FocusNFSeIntegrationApiException(method, uri, code, message, errors.ConvertAll(formatError));
 			}
+		}
+
+		private static string formatError(NFSeError error) {
+			var formatted = $"Codigo: {error.Code} - Mensagem: {error.Message}";
+			return string.IsNullOrWhiteSpace(error.Correction) ? formatted : $"{formatted} - Correcao: {error.Correction}";
 		}
 	}
 }
