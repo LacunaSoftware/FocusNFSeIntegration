@@ -145,7 +145,7 @@ namespace Lacuna.FocusNFSeIntegration {
 				var result = JsonConvert.DeserializeObject<T>(responseContent);
 				afterDeserialization?.Invoke(httpResponse, client, result);
 				return result;
-			} catch {
+			} catch (Exception ex) when (ex is not FocusNFSeIntegrationApiException) {
 				var error = JsonConvert.DeserializeObject<NFSeError>(responseContent);
 				throw new FocusNFSeIntegrationApiException(
 					method,
