@@ -143,24 +143,31 @@ namespace Lacuna.FocusNFSeIntegration {
 
 			try {
 				var result = JsonConvert.DeserializeObject<T>(responseContent);
+				logger.LogInformation("NFSe response processed successfully. Method: {Method}, Url: {Endpoint}, ResponseType: {ResponseType}", method, endpoint, typeof(T).Name);
 				afterDeserialization?.Invoke(httpResponse, client, result);
 				return result;
-			} catch {
+			} catch (Exception ex) when (ex is not FocusNFSeIntegrationApiException) {
+				logger.LogError(ex, "Error processing NFSe response. Method: {Method}, Url: {Endpoint}, ResponseContent: {ResponseContent}", method, endpoint, responseContent);
 				var error = JsonConvert.DeserializeObject<NFSeError>(responseContent);
 				throw new FocusNFSeIntegrationApiException(
 					method,
 					new Uri(client.BaseAddress, endpoint),
 					"Response error",
 					"Error on response",
-					new List<string> { $"Codigo: {error.Code} - Mensagem: {error.Message}" }
+					new List<string> { formatError(error) }
 				);
 			}
 		}
 
 		private static void handleErrorResponse(HttpMethod method, Uri uri, string code, string message, List<NFSeError> errors) {
 			if (errors != null) {
-				throw new FocusNFSeIntegrationApiException(method, uri, code, message, errors.ConvertAll(e => $"Codigo: {e.Code} - Mensagem: {e.Message}"));
+				throw new FocusNFSeIntegrationApiException(method, uri, code, message, errors.ConvertAll(formatError));
 			}
+		}
+
+		private static string formatError(NFSeError error) {
+			var formatted = $"Codigo: {error.Code} - Mensagem: {error.Message}";
+			return string.IsNullOrWhiteSpace(error.Correction) ? formatted : $"{formatted} - Correcao: {error.Correction}";
 		}
 	}
 }
