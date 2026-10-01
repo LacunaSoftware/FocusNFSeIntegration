@@ -11,5 +11,9 @@ namespace Lacuna.FocusNFSeIntegration {
 		public static readonly string Canceled = "cancelado";
 		public static readonly string AuthorizationError = "erro_autorizacao";
 		public static readonly string Denied = "denegado";
+		/// <summary>
+		/// Denied, as the national layout (/v2/nfsen) reports it.
+		/// </summary>
+		public static readonly string NationalDenied = "negado";
 	}
 }

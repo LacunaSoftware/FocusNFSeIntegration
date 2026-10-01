@@ -68,5 +68,12 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// </summary>
 		[JsonProperty("caminho_xml_nota_fiscal")]
 		public string NFSeXmlUrl { get; set; }
+
+		/// <summary>
+		/// DANFSe url, pdf format. Only in the national layout (/v2/nfsen), where <see cref="NFSeMirrorUrl"/>
+		/// points to the public query page of the national portal instead.
+		/// </summary>
+		[JsonProperty("url_danfse")]
+		public string DanfseUrl { get; set; }
 	}
 }

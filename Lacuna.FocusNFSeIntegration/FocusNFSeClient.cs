@@ -84,6 +84,72 @@ namespace Lacuna.FocusNFSeIntegration {
 		}
 
 		/// <summary>
+		/// Submits a DPS in the national layout. Must be verified if the NFSe was accepted in further
+		/// retrieval requests.
+		/// </summary>
+		public async Task<NFSeResponse> CreateNationalNFSeAsync(string reference, NFSeNationalRequest request) {
+			var body = JsonConvert.SerializeObject(request,
+							new JsonSerializerSettings {
+								NullValueHandling = NullValueHandling.Ignore
+							});
+
+			var requestUri = $"/v2/nfsen?ref={reference}";
+
+			var data = new StringContent(body, Encoding.UTF8, Constants.MediaType);
+
+			return await sendHttpRequestAsync<NFSeResponse>(
+				HttpMethod.Post,
+				requestUri,
+				data,
+				(response, client, obj) => handleErrorResponse(
+					HttpMethod.Post,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
+			);
+		}
+
+		/// <summary>
+		/// Retrieves a national layout NFSe using its unique reference
+		/// </summary>
+		public async Task<NFSeDetailsResponse> RetrieveNationalNFSeAsync(string reference) {
+			var requestUri = $"/v2/nfsen/{reference}?completa=0";
+
+			return await sendHttpRequestAsync<NFSeDetailsResponse>(
+				HttpMethod.Get,
+				requestUri,
+				afterDeserialization: (response, client, obj) => handleErrorResponse(
+					HttpMethod.Get,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
+			);
+		}
+
+		/// <summary>
+		/// Cancels a national layout NFSe using its unique reference
+		/// </summary>
+		public async Task<NFSeOnlyStatusResponse> CancelNationalNFSeAsync(string reference) {
+			var requestUri = $"/v2/nfsen/{reference}";
+
+			return await sendHttpRequestAsync<NFSeOnlyStatusResponse>(
+				HttpMethod.Delete,
+				requestUri,
+				afterDeserialization: (response, client, obj) => handleErrorResponse(
+					HttpMethod.Delete,
+					new Uri(client.BaseAddress, requestUri),
+					"Response error",
+					"Error on response",
+					obj.Errors
+				)
+			);
+		}
+
+		/// <summary>
 		/// Sends a NFSe to the e-mails inside the given list
 		/// </summary>
 		//public async Task ResendEmailAsync(string reference, EmailSendRequest request) {
