@@ -38,6 +38,13 @@ namespace Lacuna.FocusNFSeIntegration {
 		public long? DpsNumber { get; set; }
 
 		/// <summary>
+		/// Who issues the DPS: 1 provider, 2 client, 3 intermediary. Focus assumes the provider when
+		/// omitted.
+		/// </summary>
+		[JsonProperty("emitente_dps")]
+		public int? EmitterType { get; set; }
+
+		/// <summary>
 		/// IBGE code (7 digits) of the city issuing the NFSe.
 		/// </summary>
 		[JsonProperty("codigo_municipio_emissora")]
