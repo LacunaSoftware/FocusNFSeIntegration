@@ -1,0 +1,15 @@
+name: Publish Client
+on:
+  push:
+    tags:
+      - "client-v*"
+
+jobs:
+  publish:
+    uses: LacunaSoftware/SharedWorkflows/.github/workflows/build-dotnet-lib.yaml@v0.17
+    with:
+      dotnet-version: '8.0.x'
+      csproj-path: 'Lacuna.FocusNFSeIntegration'
+      lib-name: 'Lacuna.FocusNFSeIntegration'
+    secrets:
+      NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
