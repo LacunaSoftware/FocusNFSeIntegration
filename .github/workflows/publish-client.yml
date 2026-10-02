@@ -4,12 +4,45 @@ on:
     tags:
       - "client-v*"
 
+permissions:
+  contents: read
+
+env:
+  CSPROJ_PATH: Lacuna.FocusNFSeIntegration
+  LIB_NAME: Lacuna.FocusNFSeIntegration
+  REPOSITORY_URL: https://lacunasoftware.pkgs.visualstudio.com/_packaging/lacunasoftware/nuget/v3/index.json
+
 jobs:
   publish:
-    uses: LacunaSoftware/SharedWorkflows/.github/workflows/build-dotnet-lib.yaml@v0.17
-    with:
-      dotnet-version: '8.0.x'
-      csproj-path: 'Lacuna.FocusNFSeIntegration'
-      lib-name: 'Lacuna.FocusNFSeIntegration'
-    secrets:
-      NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Validate tag
+        run: |
+          $xml = [Xml] (Get-Content ${{ env.CSPROJ_PATH }}/${{ env.LIB_NAME }}.csproj)
+          $version = $xml.Project.PropertyGroup.Version
+          $tagVersion = "${{ github.ref_name }}" -replace '^client-v', ''
+          if ($tagVersion -ne $version) {
+            throw "Tag version '$tagVersion' does not match csproj <Version> '$version'"
+          }
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.CSPROJ_PATH }}/${{ env.LIB_NAME }}.csproj
+
+      - name: Build
+        run: dotnet pack ${{ env.CSPROJ_PATH }}/${{ env.LIB_NAME }}.csproj --configuration Release --no-restore
+
+      - name: Publish
+        env:
+          NUGET_PUBLISH_KEY: ${{ secrets.NUGET_PUBLISH_KEY }}
+        run: |
+          $xml = [Xml] (Get-Content ${{ env.CSPROJ_PATH }}/${{ env.LIB_NAME }}.csproj)
+          $version = $xml.Project.PropertyGroup.Version
+          dotnet nuget add source $env:REPOSITORY_URL --name LacunaNuGet --username unused --password $env:NUGET_PUBLISH_KEY --store-password-in-clear-text
+          dotnet nuget push ${{ env.CSPROJ_PATH }}/bin/Release/${{ env.LIB_NAME }}.$version.nupkg --source LacunaNuGet --api-key $env:NUGET_PUBLISH_KEY
