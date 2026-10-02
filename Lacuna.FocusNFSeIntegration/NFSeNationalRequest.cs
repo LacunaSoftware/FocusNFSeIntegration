@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
 namespace Lacuna.FocusNFSeIntegration {
@@ -8,7 +8,8 @@ namespace Lacuna.FocusNFSeIntegration {
 	/// municipal layout, it is flat: provider, client and service fields sit side by side.
 	/// </summary>
 	/// <remarks>
-	/// Field reference: https://campos.focusnfe.com.br/nfse_nacional/EmissaoDPSXml.html
+	/// Field reference, with the allowed values of every coded field: <see href="https://campos.focusnfe.com.br/nfse_nacional/EmissaoDPSXml.html"/>.
+	/// Coded fields are plain numbers, as Focus takes them; the values used are listed on each.
 	/// </remarks>
 	public class NFSeNationalRequest {
 
@@ -38,8 +39,12 @@ namespace Lacuna.FocusNFSeIntegration {
 		public long? DpsNumber { get; set; }
 
 		/// <summary>
-		/// Who issues the DPS: 1 provider, 2 client, 3 intermediary. Focus assumes the provider when
-		/// omitted.
+		/// Who issues the DPS (tpEmit). Focus assumes the provider when omitted.
+		/// <list type="bullet">
+		/// <item>1: provider</item>
+		/// <item>2: client</item>
+		/// <item>3: intermediary</item>
+		/// </list>
 		/// </summary>
 		[JsonProperty("emitente_dps")]
 		public int? EmitterType { get; set; }
@@ -58,15 +63,41 @@ namespace Lacuna.FocusNFSeIntegration {
 		[JsonProperty("inscricao_municipal_prestador")]
 		public string ProviderCitySubscription { get; set; }
 
+		/// <summary>
+		/// Standing in the Simples Nacional (opSimpNac).
+		/// <list type="bullet">
+		/// <item>1: not an optant</item>
+		/// <item>2: optant, MEI</item>
+		/// <item>3: optant, ME/EPP</item>
+		/// </list>
+		/// </summary>
 		[JsonProperty("codigo_opcao_simples_nacional")]
-		public SimpleNationalOption SimpleNationalOption { get; set; } = SimpleNationalOption.NotOptant;
+		public int SimpleNationalOption { get; set; } = 1;
 
 		/// <summary>
-		/// Only for Simples Nacional optants.
+		/// How a Simples Nacional optant collects its taxes (regApTribSN). Only for optants.
+		/// <list type="bullet">
+		/// <item>1: federal and municipal taxes through the Simples Nacional</item>
+		/// <item>2: federal taxes through the Simples Nacional, ISSQN outside it</item>
+		/// <item>3: federal and municipal taxes outside the Simples Nacional</item>
+		/// </list>
 		/// </summary>
 		[JsonProperty("regime_tributario_simples_nacional")]
 		public int? SimpleNationalTaxRegime { get; set; }
 
+		/// <summary>
+		/// Special municipal tax regime (regEspTrib).
+		/// <list type="bullet">
+		/// <item>0: none</item>
+		/// <item>1: cooperative act</item>
+		/// <item>2: estimate</item>
+		/// <item>3: municipal microenterprise</item>
+		/// <item>4: notary or registrar</item>
+		/// <item>5: self-employed professional</item>
+		/// <item>6: professional partnership</item>
+		/// <item>9: other</item>
+		/// </list>
+		/// </summary>
 		[JsonProperty("regime_especial_tributacao")]
 		public int SpecialTaxRegime { get; set; } = 0;
 
@@ -152,11 +183,28 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		// ISSQN
 
+		/// <summary>
+		/// ISSQN taxation of the service (tribISSQN).
+		/// <list type="bullet">
+		/// <item>1: taxable</item>
+		/// <item>2: immunity</item>
+		/// <item>3: service export</item>
+		/// <item>4: no incidence</item>
+		/// </list>
+		/// </summary>
 		[JsonProperty("tributacao_iss")]
-		public IssTaxation IssTaxation { get; set; } = IssTaxation.Taxable;
+		public int IssTaxation { get; set; } = 1;
 
+		/// <summary>
+		/// ISSQN withholding (tpRetISSQN).
+		/// <list type="bullet">
+		/// <item>1: not withheld</item>
+		/// <item>2: withheld by the client</item>
+		/// <item>3: withheld by the intermediary</item>
+		/// </list>
+		/// </summary>
 		[JsonProperty("tipo_retencao_iss")]
-		public IssRetention IssRetention { get; set; } = IssRetention.NotRetained;
+		public int IssRetention { get; set; } = 1;
 
 		/// <summary>
 		/// ISSQN rate (%). Filled by the national system when the city of incidence is parameterized
@@ -185,13 +233,20 @@ namespace Lacuna.FocusNFSeIntegration {
 		// IBS / CBS (reforma tributária)
 
 		/// <summary>
-		/// Purpose of the emission. 0: regular NFSe.
+		/// Purpose of the emission (finNFSe).
+		/// <list type="bullet">
+		/// <item>0: regular NFSe</item>
+		/// </list>
 		/// </summary>
 		[JsonProperty("finalidade_emissao")]
 		public int EmissionPurpose { get; set; } = 0;
 
 		/// <summary>
-		/// Whether the operation is for personal use or consumption.
+		/// Whether the operation is for personal use or consumption (indFinal).
+		/// <list type="bullet">
+		/// <item>0: no</item>
+		/// <item>1: yes</item>
+		/// </list>
 		/// </summary>
 		[JsonProperty("consumidor_final")]
 		public int FinalConsumer { get; set; }
@@ -203,7 +258,11 @@ namespace Lacuna.FocusNFSeIntegration {
 		public string OperationIndicator { get; set; }
 
 		/// <summary>
-		/// 0: the recipient is the client itself; 1: someone else.
+		/// Who receives the service (indDest).
+		/// <list type="bullet">
+		/// <item>0: the client itself</item>
+		/// <item>1: someone else, or another establishment of the client</item>
+		/// </list>
 		/// </summary>
 		[JsonProperty("indicador_destinatario")]
 		public int RecipientIndicator { get; set; } = 0;
@@ -219,24 +278,5 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// </summary>
 		[JsonProperty("ibs_cbs_classificacao_tributaria")]
 		public string IbsCbsTaxClassification { get; set; }
-	}
-
-	public enum SimpleNationalOption {
-		NotOptant = 1,
-		Mei = 2,
-		MeEpp = 3,
-	}
-
-	public enum IssTaxation {
-		Taxable = 1,
-		Immunity = 2,
-		Export = 3,
-		NoIncidence = 4,
-	}
-
-	public enum IssRetention {
-		NotRetained = 1,
-		RetainedByClient = 2,
-		RetainedByIntermediary = 3,
 	}
 }
