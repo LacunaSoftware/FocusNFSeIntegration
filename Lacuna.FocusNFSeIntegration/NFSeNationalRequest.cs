@@ -173,13 +173,13 @@ namespace Lacuna.FocusNFSeIntegration {
 		public string AdditionalInformation { get; set; }
 
 		[JsonProperty("valor_servico")]
-		public double ServiceValue { get; set; }
+		public decimal ServiceValue { get; set; }
 
 		[JsonProperty("desconto_incondicionado")]
-		public double? UnconditionedDiscount { get; set; }
+		public decimal? UnconditionedDiscount { get; set; }
 
 		[JsonProperty("desconto_condicionado")]
-		public double? ConditionedDiscount { get; set; }
+		public decimal? ConditionedDiscount { get; set; }
 
 		// ISSQN
 
@@ -211,24 +211,24 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// there; must be informed otherwise.
 		/// </summary>
 		[JsonProperty("percentual_aliquota_relativa_municipio")]
-		public double? IssAliquota { get; set; }
+		public decimal? IssAliquota { get; set; }
 
 		// Approximate tax totals (Lei da Transparência)
 
 		[JsonProperty("percentual_total_tributos_federais")]
-		public double? FederalTaxPercent { get; set; }
+		public decimal? FederalTaxPercent { get; set; }
 
 		[JsonProperty("percentual_total_tributos_estaduais")]
-		public double? StateTaxPercent { get; set; }
+		public decimal? StateTaxPercent { get; set; }
 
 		[JsonProperty("percentual_total_tributos_municipais")]
-		public double? MunicipalTaxPercent { get; set; }
+		public decimal? MunicipalTaxPercent { get; set; }
 
 		/// <summary>
 		/// Only for Simples Nacional optants.
 		/// </summary>
 		[JsonProperty("percentual_total_tributos_simples_nacional")]
-		public double? SimpleNationalTaxPercent { get; set; }
+		public decimal? SimpleNationalTaxPercent { get; set; }
 
 		// IBS / CBS (reforma tributária)
 
