@@ -14,9 +14,10 @@ namespace Lacuna.FocusNFSeIntegration {
 	public class NFSeNationalRequest {
 
 		/// <summary>
-		/// DPS emission date and time, with its offset.
+		/// DPS emission date and time, with its offset, to the second.
 		/// </summary>
 		[JsonProperty("data_emissao")]
+		[JsonConverter(typeof(CustomDateTimeOffsetConverter))]
 		public DateTimeOffset EmissionDate { get; set; }
 
 		/// <summary>
@@ -57,9 +58,15 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		// Provider
 
+		/// <summary>
+		/// Provider CNPJ, digits only.
+		/// </summary>
 		[JsonProperty("cnpj_prestador")]
 		public string ProviderCnpj { get; set; }
 
+		/// <summary>
+		/// Provider municipal registration (IM).
+		/// </summary>
 		[JsonProperty("inscricao_municipal_prestador")]
 		public string ProviderCitySubscription { get; set; }
 
@@ -103,39 +110,75 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		// Client
 
+		/// <summary>
+		/// Client CNPJ, digits only. Either this or <see cref="ClientCpf"/>.
+		/// </summary>
 		[JsonProperty("cnpj_tomador")]
 		public string ClientCnpj { get; set; }
 
+		/// <summary>
+		/// Client CPF, digits only. Either this or <see cref="ClientCnpj"/>.
+		/// </summary>
 		[JsonProperty("cpf_tomador")]
 		public string ClientCpf { get; set; }
 
+		/// <summary>
+		/// Client municipal registration (IM), when it has one.
+		/// </summary>
 		[JsonProperty("inscricao_municipal_tomador")]
 		public string ClientCitySubscription { get; set; }
 
+		/// <summary>
+		/// Client name, up to 150 characters.
+		/// </summary>
 		[JsonProperty("razao_social_tomador")]
 		public string ClientName { get; set; }
 
+		/// <summary>
+		/// IBGE code (7 digits) of the city in the client's address.
+		/// </summary>
 		[JsonProperty("codigo_municipio_tomador")]
 		public string ClientCityCode { get; set; }
 
+		/// <summary>
+		/// Client postal code (CEP), 8 digits.
+		/// </summary>
 		[JsonProperty("cep_tomador")]
 		public string ClientPostalCode { get; set; }
 
+		/// <summary>
+		/// Street of the client's address, up to 255 characters.
+		/// </summary>
 		[JsonProperty("logradouro_tomador")]
 		public string ClientStreet { get; set; }
 
+		/// <summary>
+		/// Number in the client's address, up to 60 characters.
+		/// </summary>
 		[JsonProperty("numero_tomador")]
 		public string ClientNumber { get; set; }
 
+		/// <summary>
+		/// Complement of the client's address, up to 156 characters.
+		/// </summary>
 		[JsonProperty("complemento_tomador")]
 		public string ClientComplement { get; set; }
 
+		/// <summary>
+		/// Neighborhood of the client's address, up to 60 characters.
+		/// </summary>
 		[JsonProperty("bairro_tomador")]
 		public string ClientNeighborhood { get; set; }
 
+		/// <summary>
+		/// Client phone, 6 to 20 digits.
+		/// </summary>
 		[JsonProperty("telefone_tomador")]
 		public string ClientPhone { get; set; }
 
+		/// <summary>
+		/// Client e-mail, up to 80 characters.
+		/// </summary>
 		[JsonProperty("email_tomador")]
 		public string ClientEmail { get; set; }
 
@@ -160,6 +203,9 @@ namespace Lacuna.FocusNFSeIntegration {
 		[JsonProperty("codigo_tributacao_municipal_iss")]
 		public string CityTributeCode { get; set; }
 
+		/// <summary>
+		/// Full description of the service, up to 1000 characters.
+		/// </summary>
 		[JsonProperty("descricao_servico")]
 		public string Description { get; set; }
 
@@ -169,15 +215,27 @@ namespace Lacuna.FocusNFSeIntegration {
 		[JsonProperty("codigo_nbs")]
 		public string NbsCode { get; set; }
 
+		/// <summary>
+		/// Free-form complementary information, up to 2000 characters.
+		/// </summary>
 		[JsonProperty("informacoes_complementares")]
 		public string AdditionalInformation { get; set; }
 
+		/// <summary>
+		/// Value of the service (R$).
+		/// </summary>
 		[JsonProperty("valor_servico")]
 		public decimal ServiceValue { get; set; }
 
+		/// <summary>
+		/// Unconditioned discount (R$).
+		/// </summary>
 		[JsonProperty("desconto_incondicionado")]
 		public decimal? UnconditionedDiscount { get; set; }
 
+		/// <summary>
+		/// Conditioned discount (R$).
+		/// </summary>
 		[JsonProperty("desconto_condicionado")]
 		public decimal? ConditionedDiscount { get; set; }
 
@@ -215,12 +273,21 @@ namespace Lacuna.FocusNFSeIntegration {
 
 		// Approximate tax totals (Lei da Transparência)
 
+		/// <summary>
+		/// Approximate federal tax burden (%).
+		/// </summary>
 		[JsonProperty("percentual_total_tributos_federais")]
 		public decimal? FederalTaxPercent { get; set; }
 
+		/// <summary>
+		/// Approximate state tax burden (%).
+		/// </summary>
 		[JsonProperty("percentual_total_tributos_estaduais")]
 		public decimal? StateTaxPercent { get; set; }
 
+		/// <summary>
+		/// Approximate municipal tax burden (%).
+		/// </summary>
 		[JsonProperty("percentual_total_tributos_municipais")]
 		public decimal? MunicipalTaxPercent { get; set; }
 
@@ -249,7 +316,7 @@ namespace Lacuna.FocusNFSeIntegration {
 		/// </list>
 		/// </summary>
 		[JsonProperty("consumidor_final")]
-		public int FinalConsumer { get; set; }
+		public int FinalConsumer { get; set; } = 0;
 
 		/// <summary>
 		/// Operation indicator code (cIndOp), 6 digits.
