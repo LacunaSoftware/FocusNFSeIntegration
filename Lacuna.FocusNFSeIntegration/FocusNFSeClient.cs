@@ -18,16 +18,48 @@ namespace Lacuna.FocusNFSeIntegration {
 			this.clientFactory = clientFactory;
 		}
 
+		private const string MunicipalPath = "/v2/nfse";
+		private const string NationalPath = "/v2/nfsen";
+
 		/// <summary>
-		/// Submits a NFSe. Must be verified if the NFSe was accept in further retrieval requests.
+		/// Submits a NFSe in the municipal layout. Must be verified if the NFSe was accepted in further
+		/// retrieval requests.
 		/// </summary>
-		public async Task<NFSeResponse> CreateNFSeAsync(string reference, NFSeRequest request) {
+		public Task<NFSeResponse> CreateNFSeAsync(string reference, NFSeRequest request) => createAsync(MunicipalPath, reference, request);
+
+		/// <summary>
+		/// Retrieves a municipal layout NFSe using its unique reference
+		/// </summary>
+		public Task<NFSeDetailsResponse> RetrieveNFSeAsync(string reference) => retrieveAsync(MunicipalPath, reference);
+
+		/// <summary>
+		/// Cancels a municipal layout NFSe using its unique reference
+		/// </summary>
+		public Task<NFSeOnlyStatusResponse> CancelNFSeAsync(string reference) => cancelAsync(MunicipalPath, reference);
+
+		/// <summary>
+		/// Submits a DPS in the national layout. Must be verified if the NFSe was accepted in further
+		/// retrieval requests.
+		/// </summary>
+		public Task<NFSeResponse> CreateNationalNFSeAsync(string reference, NFSeNationalRequest request) => createAsync(NationalPath, reference, request);
+
+		/// <summary>
+		/// Retrieves a national layout NFSe using its unique reference
+		/// </summary>
+		public Task<NFSeDetailsResponse> RetrieveNationalNFSeAsync(string reference) => retrieveAsync(NationalPath, reference);
+
+		/// <summary>
+		/// Cancels a national layout NFSe using its unique reference
+		/// </summary>
+		public Task<NFSeOnlyStatusResponse> CancelNationalNFSeAsync(string reference) => cancelAsync(NationalPath, reference);
+
+		private async Task<NFSeResponse> createAsync(string basePath, string reference, object request) {
 			var body = JsonConvert.SerializeObject(request,
 							new JsonSerializerSettings {
 								NullValueHandling = NullValueHandling.Ignore
 							});
 
-			var requestUri = $"/v2/nfse?ref={reference}";
+			var requestUri = $"{basePath}?ref={reference}";
 
 			var data = new StringContent(body, Encoding.UTF8, Constants.MediaType);
 
@@ -45,11 +77,8 @@ namespace Lacuna.FocusNFSeIntegration {
 			);
 		}
 
-		/// <summary>
-		/// Retrieves a NFSe using its unique reference
-		/// </summary>
-		public async Task<NFSeDetailsResponse> RetrieveNFSeAsync(string reference) {
-			var requestUri = $"/v2/nfse/{reference}?completa=0";
+		private async Task<NFSeDetailsResponse> retrieveAsync(string basePath, string reference) {
+			var requestUri = $"{basePath}/{reference}?completa=0";
 
 			return await sendHttpRequestAsync<NFSeDetailsResponse>(
 				HttpMethod.Get,
@@ -64,11 +93,8 @@ namespace Lacuna.FocusNFSeIntegration {
 			);
 		}
 
-		/// <summary>
-		/// Cancels a NFSe using its unique reference
-		/// </summary>
-		public async Task<NFSeOnlyStatusResponse> CancelNFSeAsync(string reference) {
-			var requestUri = $"/v2/nfse/{reference}";
+		private async Task<NFSeOnlyStatusResponse> cancelAsync(string basePath, string reference) {
+			var requestUri = $"{basePath}/{reference}";
 
 			return await sendHttpRequestAsync<NFSeOnlyStatusResponse>(
 				HttpMethod.Delete,
